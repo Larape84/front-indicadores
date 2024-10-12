@@ -1,0 +1,15 @@
+.header {
+  width: 100%;
+  min-width: 100%;
+  height: 60px;
+  background-color: #111827;
+}
+.icon-size {
+  --size: 2rem;
+  width: var(--size) /* 96px */ !important;
+  height: var(--size) /* 96px */ !important;
+  min-width: var(--size) /* 96px */ !important;
+  min-height: var(--size) /* 96px */ !important;
+  font-size: var(--size) /* 96px */ !important;
+  line-height: var(--size) /* 96px */ !important;
+}
