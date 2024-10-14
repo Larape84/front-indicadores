@@ -18,6 +18,7 @@ export class ModalNuevaMedidaComponent implements OnInit {
   public formMedida: FormGroup = new FormGroup({})
 
   public tipoMedida: any[] = []
+  public valoresMedida = 'Seleccione una medida'
 
   constructor(
     @Inject (MAT_DIALOG_DATA) public data: any,
@@ -59,17 +60,18 @@ export class ModalNuevaMedidaComponent implements OnInit {
   public cambioMedida(): void {
 
     const {idUnidadMedida} = this.formMedida.value
-    console.log(this.formMedida.controls['valorMedido'])
 
     this.formMedida.controls['valorMedido'].clearValidators();
     this.formMedida.controls['valorMedido'].addValidators([Validators.required])
+    this.valoresMedida = 'Seleccione una medida'
 
     if(!idUnidadMedida){
-
       return
     }
 
-    const {valorMinimo, valorMaximo} = this.tipoMedida.find(item=>item.id === idUnidadMedida)
+    const {valorMinimo, valorMaximo, valorEsperado} = this.tipoMedida.find(item=>item.id === idUnidadMedida)
+
+    this.valoresMedida = `Valor esperado:${valorEsperado} - valor minimo:${valorMinimo} - valor maximo:${valorMaximo}`
 
     this.formMedida.controls['valorMedido'].addValidators([ValidarNumeros()])
   }

@@ -167,14 +167,14 @@
             </ng-container>
 
             <ng-container matColumnDef="editar">
-              <th mat-header-cell *matHeaderCellDef >
-                <div style="z-index: 99999; top: 0px; position: sticky; overflow: hidden; width: 100%;" >
+              <th mat-header-cell *matHeaderCellDef style="z-index: 99999; top: 0px; position: sticky; overflow: hidden;" >
+                <div  >
 
                   Acciones
                 </div>
                 </th>
               <td mat-cell *matCellDef="let element" >
-                <div class="" style="display: flex; gap: 6px; align-items: center; z-index: auto;">
+                <div class="" style="display: flex; gap: 6px; align-items: center; z-index: -10;">
 
                   <button (click)="openmodal(element)" mat-icon-button type="button">
                     <mat-icon class="">edit</mat-icon>
@@ -209,7 +209,7 @@
 
 
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky:true" style="background-color: #c9bcbc; position: sticky; top: 0px; z-index: 9999;"></tr>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns" class="sticky" style="background-color: #c9bcbc; position: sticky; top: 0px; z-index: 9999;"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;" style="background-color: white;"></tr>
           </table>
         </div>

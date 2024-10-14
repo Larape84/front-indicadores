@@ -36,3 +36,29 @@
   font-size: var(--size) /* 96px */ !important;
   line-height: var(--size) /* 96px */ !important;
 }
+
+::ng-deep .sticky {
+  position: sticky;
+  top: 0px;
+  z-index: 99;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: gray ;
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 12px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: gray;
+  border-radius: 20px;
+  border: 3px solid transparent;
+}
