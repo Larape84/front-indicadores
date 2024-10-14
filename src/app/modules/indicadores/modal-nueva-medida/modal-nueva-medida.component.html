@@ -2,37 +2,62 @@
 
   <section style="display: flex; gap: 4px; align-items: center;margin-bottom: 5px;">
     <mat-icon class="icon-size" style="color: orange;">info</mat-icon>
-      <div style="font-weight: 500; font-size: 16px;">Registrar nuevo indicador</div>
+      <div style="font-weight: 500; font-size: 16px; color: gray;">Registrar nuevo indicador</div>
   </section>
 
-  <hr style="margin-top: 0px; margin-bottom: 0px;">
+  <hr style="margin-top: 0px; margin-bottom: 20px;">
 
 
-  <section style=" display: flex; flex-direction: column; gap: 10px; margin-top: 10px; margin-bottom: 10px;">
+  <section >
+
+    <form [formGroup]="formMedida" style=" display: flex; flex-direction: column; gap: 36px; margin-top: 10px; margin-bottom: 10px;">
+
+
 
     <mat-form-field appearance="outline">
-      <mat-label>Fecha medición</mat-label>
-      <input type="text" matInput>
+      <mat-label>Seleccione medida</mat-label>
+      <mat-select formControlName="idUnidadMedida">
+        <mat-option value="">Seleccione</mat-option>
+          <mat-option *ngFor="let medida of tipoMedida" [value]="medida.id">{{medida.nombre}}</mat-option>
+
+      </mat-select>
+      <mat-error>Este campo es requerido</mat-error>
     </mat-form-field>
+
+
+    <mat-form-field appearance="outline">
+      <mat-label>Seleccione fecha medición</mat-label>
+      <input formControlName="fecha"  matInput [matDatepicker]="picker">
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+      <mat-error>Este campo es requerido</mat-error>
+
+    </mat-form-field>
+
+
 
     <mat-form-field appearance="outline">
       <mat-label>Valor medido</mat-label>
-      <input type="text" matInput>
+      <input formControlName="valorMedido"  type="text" matInput>
+      <mat-error>Este campo es requerido</mat-error>
+
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Descripción</mat-label>
-      <input type="text" matInput>
+      <input  formControlName="descripcion" type="text" matInput>
+      <mat-error>Este campo es requerido</mat-error>
+
     </mat-form-field>
 
-
+  </form>
 
   </section>
 
-  <hr style="margin-top: 0px; margin-bottom: 0px;">
+  <hr style="margin-top: 30px; margin-bottom: 0px;">
 
   <section style="display: flex; gap: 4px; align-items: center; justify-content: space-around; margin-top: 10px;">
-    <button type="button" mat-raised-button style="background-color: orange; color: white;">
+    <button (click)="enviarForm()" [disabled]="formMedida.invalid" type="button" mat-raised-button [ngStyle]="{'background-color' : formMedida.invalid ? '#e1dbdb' : 'orange' }" style="color: white;">
       Guardar
 
     </button>

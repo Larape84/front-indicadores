@@ -7,6 +7,8 @@ import { ModalNuevaMedidaComponent } from './modal-nueva-medida/modal-nueva-medi
 import { UtilServiceService } from '../../services/util-service.service';
 import moment from 'moment';
 import Swal from 'sweetalert2';
+import { IndicadoresService } from '../../services/indicadores.service';
+import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-indicadores',
@@ -22,7 +24,7 @@ export class IndicadoresComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) public paginator!: MatPaginator;
 
   public selectedOption = null
-  public displayedColumns : string[] = ['id','nombre','valorEsperado','valorMinimo','valorMaximo','unidadMedida','editar']
+  public displayedColumns : string[] = ['id','nombre','valorEsperado','valorMinimo','valorMaximo','unidadMedida','valorObtenido', 'editar']
   public tipoMedida = [
     {
       "id": 1,
@@ -41,12 +43,15 @@ export class IndicadoresComponent implements OnInit, AfterViewInit {
       "unidadMedida": "porcentaje"
     }
   ]
+
+
   public dataSource = new MatTableDataSource<any>(this.tipoMedida)
 
   constructor(
-    private modalService : MatDialog,
-    private utilservice: UtilServiceService,
-    private matpaginadorClass : MatPaginatorIntl
+    private _modalService : MatDialog,
+    private _utilservice: UtilServiceService,
+    private matpaginadorClass : MatPaginatorIntl,
+    private _indicadoresService: IndicadoresService
   ){
     this.matpaginadorClass.itemsPerPageLabel = 'Total registros'
   }
@@ -64,16 +69,79 @@ export class IndicadoresComponent implements OnInit, AfterViewInit {
 
   public openmodal(): void {
 
-    this.modalService.open(ModalNuevaMedidaComponent, {
+    this._modalService.open(ModalNuevaMedidaComponent, {
       width:'600px'
+    }).afterClosed().subscribe({
+      next:(form)=>{
+
+        if(!form){
+          return
+        }
+
+        console.log(form)
+
+
+
+      }
     })
 
+
+
+  }
+
+  public actualizarIndicador(indicador : any): void {
+
+    this._indicadoresService.actualizarIndicador(indicador).subscribe({
+      next:(resp)=>{
+
+      },
+      error:()=>{
+        this.alertError()
+      }
+    })
+  }
+
+  public eliminarIndicador(indicador : any): void {
+
+    this._indicadoresService.elimininarIndicador(indicador).subscribe({
+      next:(resp)=>{
+
+      },
+      error:()=>{
+        this.alertError()
+      }
+    })
+  }
+
+
+
+  public listarIndicadores(): void {
+    this._indicadoresService.listarIndicadores().subscribe({
+      next:(resp)=>{
+
+      },
+      error:()=>{
+        this.alertError()
+      }
+    })
+  }
+
+
+  public obtenerUnidadesMedida(): void {
+    this._indicadoresService.listarUnidadesMedida().subscribe({
+      next:(resp)=>{
+
+      },
+      error:()=>{
+        this.alertError()
+      }
+    })
   }
 
   public downloadData():void {
     const data = this.dataSource.data
     const hoy = moment(new Date()).format("DD-MM-YYYY-hh-mm")
-    this.utilservice.exportAsExcelFile(data, `Reporte indicadores_${hoy}`)
+    this._utilservice.exportAsExcelFile(data, `Reporte indicadores_${hoy}`)
   }
 
 
