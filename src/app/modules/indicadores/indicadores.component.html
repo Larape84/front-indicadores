@@ -50,69 +50,169 @@
       </div>
 
       <div class="" style=" border: solid gray 1px; border-radius: 10px; overflow-x: hidden;">
-        <table mat-table [dataSource]="dataSource">
+        <div style="max-height: 400px; overflow-y: auto;"  >
 
-          <!-- Position Column -->
-          <ng-container matColumnDef="id">
-            <th mat-header-cell *matHeaderCellDef> No. </th>
-            <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-          </ng-container>
+          <table mat-table [dataSource]="dataSource">
 
-          <!-- Name Column -->
-          <ng-container matColumnDef="nombre">
-            <th mat-header-cell *matHeaderCellDef> Nombre </th>
-            <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
-          </ng-container>
+            <!-- Position Column -->
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef>
+                <div style="text-align: center;">
+                  No.
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element">
+                <div style="text-align: center;">
+                  {{element.id}}
+                </div>
+              </td>
+            </ng-container>
 
-          <!-- Weight Column -->
-          <ng-container matColumnDef="valorEsperado">
-            <th mat-header-cell *matHeaderCellDef> Valor esperado </th>
-            <td mat-cell *matCellDef="let element"> {{element.valorEsperado}} </td>
-          </ng-container>
+            <!-- Name Column -->
+            <ng-container matColumnDef="descripcion">
+              <th mat-header-cell *matHeaderCellDef> Descripción </th>
+              <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+            </ng-container>
 
-          <!-- Symbol Column -->
-          <ng-container matColumnDef="valorMinimo">
-            <th mat-header-cell *matHeaderCellDef> Valor minimo </th>
-            <td mat-cell *matCellDef="let element"> {{element.valorMinimo}} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="valorMaximo">
-            <th mat-header-cell *matHeaderCellDef> Valor maximo </th>
-            <td mat-cell *matCellDef="let element"> {{element.valorMaximo}} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="valorObtenido">
-            <th mat-header-cell *matHeaderCellDef> Valor obtenido </th>
-            <td mat-cell *matCellDef="let element"> {{element.valorMaximo}} </td>
-          </ng-container>
+            <!-- Weight Column -->
+            <ng-container matColumnDef="valorEsperado">
+              <th mat-header-cell *matHeaderCellDef>
+                <div style="text-align: center">
+                  Valor esperado
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element">
+                <div style="text-align: center;">
+                  {{element.unidadMedida.valorEsperado}}
+                </div>
+              </td>
+            </ng-container>
 
 
+            <ng-container matColumnDef="fecha">
+              <th mat-header-cell *matHeaderCellDef>
+                <div style="text-align: center">
+                  Fecha registro
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element">
+                <div style="text-align: center;">
+                  {{element.fecha}}
+                </div>
+              </td>
+            </ng-container>
 
-          <ng-container matColumnDef="unidadMedida">
-            <th mat-header-cell *matHeaderCellDef> Unidad medida </th>
-            <td mat-cell *matCellDef="let element"> {{element.unidadMedida}} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="editar">
-            <th mat-header-cell *matHeaderCellDef> Acciones </th>
-            <td mat-cell *matCellDef="let element">
-              <div style="display: flex; gap: 6px; align-items: center;">
-
-                <button mat-icon-button type="button">
-                  <mat-icon class="">edit</mat-icon>
-                </button>
-
-                <button (click)="eliminarRemistro(element)" mat-icon-button type="button">
-                  <mat-icon class="">delete_forever</mat-icon>
-                </button>
-
+            <!-- Symbol Column -->
+            <ng-container matColumnDef="valorMinimo">
+              <th mat-header-cell *matHeaderCellDef>
+              <div style="text-align: center;">
+                Valor minimo
               </div>
-            </td>
-          </ng-container>
+              </th>
+              <td mat-cell *matCellDef="let element">
+                <div style="text-align: center;">
+                  {{element.unidadMedida.valorMinimo}}
+                </div>
+              </td>
+            </ng-container>
 
-          <tr mat-header-row *matHeaderRowDef="displayedColumns" style="background-color: #c9bcbc;"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;" style="background-color: white;"></tr>
-        </table>
+            <ng-container matColumnDef="valorMaximo">
+              <th mat-header-cell *matHeaderCellDef>
+                <div style=" text-align: center;">
+                  Valor maximo
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element">
+                <div style=" text-align: center;">
+                  {{element.unidadMedida.valorMaximo}}
+                </div>
+
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="valorObtenido">
+              <th mat-header-cell *matHeaderCellDef>
+                <div style=" text-align: center;">
+                  Valor obtenido
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element">
+                <div style="display: flex; align-items: center; gap: 10px; justify-content: center;">
+                  <div [ngStyle]="{'background-color':estiloValor(element)}" class="icon-size-estado" style="border-radius: 9999px;">
+
+                  </div>
+                  <div style=" text-align: center;">
+                    {{element.valorMedido}}
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+
+
+
+            <ng-container matColumnDef="unidadMedida">
+              <th mat-header-cell *matHeaderCellDef>
+                <div style=" text-align: center; width: 100%;">
+
+                  Unidad medida
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element">
+                <div style=" text-align: center; width: 100%;">
+
+                    {{element.unidadMedida.unidadMedida}}
+
+                </div>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="editar">
+              <th mat-header-cell *matHeaderCellDef >
+                <div style="z-index: 99999; top: 0px; position: sticky; overflow: hidden; width: 100%;" >
+
+                  Acciones
+                </div>
+                </th>
+              <td mat-cell *matCellDef="let element" >
+                <div class="" style="display: flex; gap: 6px; align-items: center; z-index: auto;">
+
+                  <button (click)="openmodal(element)" mat-icon-button type="button">
+                    <mat-icon class="">edit</mat-icon>
+                  </button>
+
+                  <button (click)="eliminarRemistro(element)" mat-icon-button type="button">
+                    <mat-icon class="">delete_forever</mat-icon>
+                  </button>
+
+                </div>
+              </td>
+            </ng-container>
+
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell text-center" colspan="21">
+                  <div style="width: 100%; display: flex; flex-direction: column; height: 160px; gap: 20px; align-items: center; justify-content: center;" class="w-full h-40 flex flex-col gap-4 items-center justify-center">
+
+                      <div style="display: flex; align-items: center; justify-content: center; margin-top: 30px; gap: 12px;" class="flex items-center content-center justify-center mt-7 gap-3">
+                          <mat-icon style="color: gray; margin-top: -20px;">info</mat-icon>
+                          <p style="font-size: 30px;" class="text-5xl font-semibold tracking-tight">
+                              {{ "Aviso" }}
+                          </p>
+                      </div>
+                      <p style="font-size: 24px; margin-bottom: 30px;" class="text-lg mb-8">
+                          {{ "Lo sentimos, no se encontraron datos " }}
+                      </p>
+                  </div>
+
+              </td>
+
+          </tr>
+
+
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky:true" style="background-color: #c9bcbc; position: sticky; top: 0px; z-index: 9999;"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" style="background-color: white;"></tr>
+          </table>
+        </div>
 
         <mat-paginator >
         </mat-paginator>

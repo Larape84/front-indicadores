@@ -24,25 +24,8 @@ export class IndicadoresComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) public paginator!: MatPaginator;
 
   public selectedOption = null
-  public displayedColumns : string[] = ['id','nombre','valorEsperado','valorMinimo','valorMaximo','unidadMedida','valorObtenido', 'editar']
-  public tipoMedida = [
-    {
-      "id": 1,
-      "nombre": "Tiempo de Respuesta",
-      "valorEsperado": 30,
-      "valorMinimo": 20,
-      "valorMaximo": 40,
-      "unidadMedida": "minutos"
-    },
-    {
-      "id": 2,
-      "nombre": "Porcentaje de Satisfacción del Cliente",
-      "valorEsperado": 90,
-      "valorMinimo": 80,
-      "valorMaximo": 100,
-      "unidadMedida": "porcentaje"
-    }
-  ]
+  public displayedColumns : string[] = ['id','descripcion','unidadMedida', 'fecha','valorMinimo','valorMaximo','valorEsperado','valorObtenido', 'editar']
+  public tipoMedida : any[] = []
 
 
   public dataSource = new MatTableDataSource<any>(this.tipoMedida)
@@ -58,7 +41,8 @@ export class IndicadoresComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
 
-
+    this.listarIndicadores();
+    this.obtenerUnidadesMedida();
 
   }
 
@@ -67,16 +51,33 @@ export class IndicadoresComponent implements OnInit, AfterViewInit {
     this.paginator.pageSize = this.dataSource.data.length
   }
 
-  public openmodal(): void {
+  public openmodal(indicador: any = undefined): void {
+
+
+    console.log(indicador)
 
     this._modalService.open(ModalNuevaMedidaComponent, {
-      width:'600px'
+      width:'600px',
+      data: indicador
     }).afterClosed().subscribe({
       next:(form)=>{
 
         if(!form){
           return
         }
+
+        if(!indicador){
+          this.crearIndicador(form)
+        }else {
+          const payload = {
+            ...form,
+            id: indicador.id
+          }
+          this.actualizarIndicador(payload)
+        }
+
+
+
 
         console.log(form)
 
@@ -89,11 +90,31 @@ export class IndicadoresComponent implements OnInit, AfterViewInit {
 
   }
 
+  public crearIndicador(indicador: any): void {
+
+    this.startLoading({})
+
+    this._indicadoresService.crearIndicador(indicador).subscribe({
+      next:(resp)=>{
+
+        this.alertSuccess()
+        this.listarIndicadores()
+
+      },
+      error:()=>{
+        this.alertError()
+      }
+    })
+  }
+
   public actualizarIndicador(indicador : any): void {
+
+    this.startLoading({})
 
     this._indicadoresService.actualizarIndicador(indicador).subscribe({
       next:(resp)=>{
-
+        this.alertSuccess()
+        this.listarIndicadores()
       },
       error:()=>{
         this.alertError()
@@ -102,10 +123,12 @@ export class IndicadoresComponent implements OnInit, AfterViewInit {
   }
 
   public eliminarIndicador(indicador : any): void {
-
+    this.startLoading({})
     this._indicadoresService.elimininarIndicador(indicador).subscribe({
       next:(resp)=>{
 
+        this.alertSuccess()
+        this.listarIndicadores()
       },
       error:()=>{
         this.alertError()
@@ -114,10 +137,39 @@ export class IndicadoresComponent implements OnInit, AfterViewInit {
   }
 
 
+  public estiloValor(indicador: any): string {
+      const maximo = indicador.unidadMedida.valorMaximo
+      const minimo = indicador.unidadMedida.valorMinimo
+      const esperado = indicador.unidadMedida.valorEsperado
+
+    "  ENTREGA1: Presente un modelo de entidad relación para este problema y presente un SQL para que despliegue en orden ascendente de fecha los valores de cada medición e indique si está por debajo del valor mínimo (‘ROJO’), si el valor está entre el mínimo y el esperado (‘AMARILLO’), si el valor está entre el esperado y el límite máximo (‘VERDE’), si el valor supera el límite máximo (‘AZUL’)."
+
+    if(indicador.valorMedido < minimo){
+      return 'red'
+      } else if(indicador.valorMedido >= minimo && indicador.valorMedido < esperado){
+        return 'yellow'
+      }
+      else if(indicador.valorMedido>= esperado && indicador.valorMedido < maximo){
+        return 'green'
+      }else{
+        return 'blue'
+      }
+
+
+
+
+  }
+
+
 
   public listarIndicadores(): void {
     this._indicadoresService.listarIndicadores().subscribe({
-      next:(resp)=>{
+      next:(resp : any)=>{
+
+        const data = resp?.data ?? []
+
+        this.dataSource = new MatTableDataSource<any[]>(data)
+
 
       },
       error:()=>{
@@ -129,8 +181,8 @@ export class IndicadoresComponent implements OnInit, AfterViewInit {
 
   public obtenerUnidadesMedida(): void {
     this._indicadoresService.listarUnidadesMedida().subscribe({
-      next:(resp)=>{
-
+      next:(resp: any)=>{
+        this.tipoMedida = resp?.data ?? []
       },
       error:()=>{
         this.alertError()
@@ -145,7 +197,8 @@ export class IndicadoresComponent implements OnInit, AfterViewInit {
   }
 
 
-  public eliminarRemistro(row: any): void {
+  public eliminarRemistro(indicador: any): void {
+
     Swal.fire({
       allowOutsideClick: false,
       title: '¿Estas seguro?',
@@ -163,7 +216,10 @@ export class IndicadoresComponent implements OnInit, AfterViewInit {
       }
     }).then((result: any) => {
       if (result.isConfirmed) {
-
+        const payload = {
+          id : indicador.id
+        }
+        this.eliminarIndicador(payload)
 
 
       }

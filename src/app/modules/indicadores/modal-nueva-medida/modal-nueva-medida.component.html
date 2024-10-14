@@ -2,7 +2,7 @@
 
   <section style="display: flex; gap: 4px; align-items: center;margin-bottom: 5px;">
     <mat-icon class="icon-size" style="color: orange;">info</mat-icon>
-      <div style="font-weight: 500; font-size: 16px; color: gray;">Registrar nuevo indicador</div>
+      <div style="font-weight: 500; font-size: 16px; color: gray;">{{!!data ? 'Modificar' : 'Registrar nuevo' }} indicador</div>
   </section>
 
   <hr style="margin-top: 0px; margin-bottom: 20px;">
@@ -16,9 +16,9 @@
 
     <mat-form-field appearance="outline">
       <mat-label>Seleccione medida</mat-label>
-      <mat-select formControlName="idUnidadMedida">
+      <mat-select (selectionChange)="cambioMedida()" formControlName="idUnidadMedida">
         <mat-option value="">Seleccione</mat-option>
-          <mat-option *ngFor="let medida of tipoMedida" [value]="medida.id">{{medida.nombre}}</mat-option>
+          <mat-option *ngFor="let medida of tipoMedida" [value]="medida?.id">{{medida?.nombre}}</mat-option>
 
       </mat-select>
       <mat-error>Este campo es requerido</mat-error>
@@ -39,8 +39,8 @@
     <mat-form-field appearance="outline">
       <mat-label>Valor medido</mat-label>
       <input formControlName="valorMedido"  type="text" matInput>
-      <mat-error>Este campo es requerido</mat-error>
-
+      <!-- <mat-error >Este campo es requerido</mat-error> -->
+      <mat-error *ngIf="formMedida.controls['valorMedido'].errors?.['numberRange']">{{formMedida.controls['valorMedido'].errors?.['numberRange']}}</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -58,7 +58,7 @@
 
   <section style="display: flex; gap: 4px; align-items: center; justify-content: space-around; margin-top: 10px;">
     <button (click)="enviarForm()" [disabled]="formMedida.invalid" type="button" mat-raised-button [ngStyle]="{'background-color' : formMedida.invalid ? '#e1dbdb' : 'orange' }" style="color: white;">
-      Guardar
+      {{!!data ? 'Actualizar' : 'Guardar'}}
 
     </button>
 

@@ -2,6 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { SharedmoduleModule } from '../../../../shared/modules/sharedmodule.module';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ValidarNumeros } from '../../../../shared/Validators/validator';
+import { IndicadoresService } from '../../../services/indicadores.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-modal-nueva-medida',
@@ -14,35 +17,23 @@ export class ModalNuevaMedidaComponent implements OnInit {
 
   public formMedida: FormGroup = new FormGroup({})
 
-  public tipoMedida = [
-    {
-      "id": 1,
-      "nombre": "Tiempo de Respuesta",
-      "valorEsperado": 30,
-      "valorMinimo": 20,
-      "valorMaximo": 40,
-      "unidadMedida": "minutos"
-    },
-    {
-      "id": 2,
-      "nombre": "Porcentaje de Satisfacción del Cliente",
-      "valorEsperado": 90,
-      "valorMinimo": 80,
-      "valorMaximo": 100,
-      "unidadMedida": "porcentaje"
-    }
-  ]
+  public tipoMedida: any[] = []
 
   constructor(
     @Inject (MAT_DIALOG_DATA) public data: any,
     private modalService: MatDialogRef<ModalNuevaMedidaComponent>,
-    private fb : FormBuilder
+    private fb : FormBuilder,
+    private _indicadoresService : IndicadoresService
 
   ){}
 
 
   ngOnInit(): void {
    this.initForm();
+   this.obtenerUnidadesMedida();
+   if(!!this.data){
+    this.loadData()
+   }
 
   }
 
@@ -56,13 +47,58 @@ export class ModalNuevaMedidaComponent implements OnInit {
     })
   }
 
-  public loadData(data: any): void {
+  public loadData(): void {
+    console.log(this.data)
+    this.formMedida.controls['valorMedido'].setValue(this.data.valorMedido)
+    this.formMedida.controls['idUnidadMedida'].setValue(this.data.unidadMedida.id)
+    this.formMedida.controls['descripcion'].setValue(this.data.descripcion)
+    this.formMedida.controls['fecha'].setValue(this.data.fecha)
 
-    this.formMedida.controls['valorMedido'].setValue('')
-    this.formMedida.controls['idUnidadMedida'].setValue('')
-    this.formMedida.controls['descripcion'].setValue('')
-    this.formMedida.controls['fecha'].setValue('')
+  }
 
+  public cambioMedida(): void {
+
+    const {idUnidadMedida} = this.formMedida.value
+    console.log(this.formMedida.controls['valorMedido'])
+
+    this.formMedida.controls['valorMedido'].clearValidators();
+    this.formMedida.controls['valorMedido'].addValidators([Validators.required])
+
+    if(!idUnidadMedida){
+
+      return
+    }
+
+    const {valorMinimo, valorMaximo} = this.tipoMedida.find(item=>item.id === idUnidadMedida)
+
+    this.formMedida.controls['valorMedido'].addValidators([ValidarNumeros()])
+  }
+
+  public obtenerUnidadesMedida(): void {
+    this._indicadoresService.listarUnidadesMedida().subscribe({
+      next:(resp: any)=>{
+          this.tipoMedida =  resp.data ?? []
+      },
+      error:()=>{
+        this.alertError()
+      }
+    })
+  }
+
+  public alertError(param?:any): void {
+
+    // this.stopLoading();
+
+    Swal.fire({
+      allowOutsideClick: true,
+      backdrop: true,
+      title: 'Error!',
+      text: param?.text || "Su solicitud no pudo ser procesada, por favor intente nuevamente",
+      icon: 'error',
+      customClass: {
+        confirmButton: 'rounded-full w-20 bg-gray-400 ring-0'
+      }
+    })
   }
 
 
@@ -79,6 +115,8 @@ export class ModalNuevaMedidaComponent implements OnInit {
     this.modalService.close(form)
 
   }
+
+
 
 
 
